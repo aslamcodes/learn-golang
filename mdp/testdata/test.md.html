@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<style>
+		body { max-width: 700px; margin: 40px auto; font-family: sans-serif; line-height: 1.6; }
+		pre { background: #f4f4f4; padding: 10px; border-radius: 4px; }
+		code { background: #f4f4f4; padding: 2px 4px; border-radius: 4px; }
+	</style>
+</head>
+<body>
+<h1>Test MD File</h1>
+
+<p>Testing</p>
+
+<h2>Bullets:</h2>
+
+<ul>
+<li>links <a href="http://google.com" rel="nofollow">Link1</a></li>
+</ul>
+
+<h2>Code blocks:</h2>
+
+<pre><code>some code
+</code></pre>
+
+</body>
+</html>
