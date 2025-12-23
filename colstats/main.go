@@ -36,11 +36,12 @@ func run(files []string, op string, col int, writer io.Writer) error {
 
 	for _, file := range files {
 		file, err := os.Open(file)
-		defer file.Close()
 
 		if err != nil {
 			return err
 		}
+
+		defer file.Close()
 
 		fileData, err := csv2float(file, col)
 
