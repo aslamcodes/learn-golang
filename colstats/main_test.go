@@ -50,5 +50,4 @@ func TestCsv2Float(t *testing.T) {
 }
 
 func TestRun(t *testing.T) {
-
 }

@@ -19,7 +19,6 @@ func main() {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
-
 }
 
 func run(files []string, op string, col int, writer io.Writer) error {
