@@ -70,7 +70,7 @@ func csv2float(file io.Reader, column int) ([]float64, error) {
 	}
 
 	if len(records) < 2 {
-		return nil, fmt.Errorf("Empty CSV File with no records")
+		return nil, fmt.Errorf("Empty CSV File with no records, %s", file)
 	}
 
 	if len(records[0]) < column {
