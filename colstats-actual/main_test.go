@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"errors"
 	"io"
 	"slices"
@@ -80,5 +81,35 @@ func TestCSVToFloat(t *testing.T) {
 		if !slices.Equal(res, tC.exp) {
 			t.Errorf("expected %v, got %v", tC.exp, res)
 		}
+	}
+}
+
+func TestRun(t *testing.T) {
+	// type options struct {
+	// 	col       int
+	// 	op        string
+	// 	filenames []string
+	// }
+
+	// func run(opts options, out io.Writer) error {
+
+	testCases := []struct {
+		col       int
+		op        string
+		filenames []string
+		exp string
+		expErr error
+	}{}
+
+	out := bytes.NewBuffer([]byte{})
+
+	for _, tC := range testCases {
+		opt := options{
+			col:       tC.col,
+			op:        tC.op,
+			filenames: tC.filenames,
+		}
+		run(opt, out)
+
 	}
 }
