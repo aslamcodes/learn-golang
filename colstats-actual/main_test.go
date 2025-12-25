@@ -65,25 +65,27 @@ func TestCSVToFloat(t *testing.T) {
 	}
 
 	for _, tC := range testCases {
-		res, err := csvToFloat(tC.r, tC.col)
+		t.Run(tC.name, func(t *testing.T) {
+			res, err := csvToFloat(tC.r, tC.col)
 
-		if tC.expErr == nil {
-			if err != nil {
-				t.Errorf("error parsing csv: %v", err)
-			}
-		} else {
-			if err == nil {
-				t.Errorf("expected error, got nil instead")
+			if tC.expErr == nil {
+				if err != nil {
+					t.Errorf("error parsing csv: %v", err)
+				}
+			} else {
+				if err == nil {
+					t.Errorf("expected error, got nil instead")
+				}
+
+				if !errors.Is(err, tC.expErr) {
+					t.Errorf("expected %v, got %v", tC.expErr, err)
+				}
 			}
 
-			if !errors.Is(err, tC.expErr) {
-				t.Errorf("expected %v, got %v", tC.expErr, err)
+			if !slices.Equal(res, tC.exp) {
+				t.Errorf("expected %v, got %v", tC.exp, res)
 			}
-		}
-
-		if !slices.Equal(res, tC.exp) {
-			t.Errorf("expected %v, got %v", tC.exp, res)
-		}
+		})
 	}
 }
 
@@ -139,38 +141,40 @@ func TestRun(t *testing.T) {
 	}
 
 	for _, tC := range testCases {
-		out := bytes.NewBuffer(nil)
+		t.Run(tC.name, func(t *testing.T) {
+			out := bytes.NewBuffer(nil)
 
-		opt := options{
-			col:       tC.col,
-			op:        tC.op,
-			filenames: tC.filenames,
-		}
-
-		err := run(opt, out)
-
-		if tC.expErr == nil {
-			if err != nil {
-				t.Fatalf("unexpected error: %v", err)
+			opt := options{
+				col:       tC.col,
+				op:        tC.op,
+				filenames: tC.filenames,
 			}
-			continue
-		}
 
-		if err == nil {
-			t.Fatalf("expected error %v, got nil", tC.expErr)
-		}
+			err := run(opt, out)
 
-		if !errors.Is(err, tC.expErr) {
-			t.Fatalf("expected error %v, got %v", tC.expErr, err)
-		}
+			if tC.expErr == nil {
+				if err != nil {
+					t.Fatalf("unexpected error: %v", err)
+				}
+				return
+			}
 
-		fmt.Println(out.String())
-		act, _ := strconv.ParseFloat(strings.TrimSpace(out.String()), 64)
-		exp, _ := strconv.ParseFloat(tC.exp, 64)
+			if err == nil {
+				t.Fatalf("expected error %v, got nil", tC.expErr)
+			}
 
-		if exp != act {
-			t.Errorf("expected %f, got %f", exp, act)
-		}
+			if !errors.Is(err, tC.expErr) {
+				t.Fatalf("expected error %v, got %v", tC.expErr, err)
+			}
 
+			fmt.Println(out.String())
+			act, _ := strconv.ParseFloat(strings.TrimSpace(out.String()), 64)
+			exp, _ := strconv.ParseFloat(tC.exp, 64)
+
+			if exp != act {
+				t.Errorf("expected %f, got %f", exp, act)
+			}
+
+		})
 	}
 }

@@ -28,16 +28,16 @@ func TestOperations(t *testing.T) {
 	}
 
 	for _, tC := range testCases {
+		t.Run(tC.name, func(t *testing.T) {
+			for i, exp := range tC.exp {
+				res := tC.op(data[i])
 
-		for i, exp := range tC.exp {
-			res := tC.op(data[i])
+				if res != exp {
+					t.Errorf("expected %g, got %g instead", exp, res)
+				}
 
-			if res != exp {
-				t.Errorf("expected %g, got %g instead", exp, res)
 			}
-
-		}
-
+		})
 	}
 
 }
