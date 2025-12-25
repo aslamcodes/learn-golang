@@ -65,7 +65,7 @@ func run(opts options, out io.Writer) error {
 		data, err := csvToFloat(file, opts.col)
 
 		if err != nil {
-			return fmt.Errorf("error calculating column %s on file %s: %w", opts.col, file.Name(), err)
+			return fmt.Errorf("error calculating column %d on file %s: %w", opts.col, file.Name(), err)
 		}
 
 		consolidated = append(consolidated, data...)
