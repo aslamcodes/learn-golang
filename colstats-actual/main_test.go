@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"os"
 	"slices"
 	"strconv"
 	"strings"
@@ -118,6 +119,14 @@ func TestRun(t *testing.T) {
 			filenames: []string{"testdata/sample_2.csv"},
 			exp:       "",
 			expErr:    ErrInvalidOperation,
+		},
+		{
+			name:      "Not exists",
+			col:       1,
+			op:        "sum",
+			filenames: []string{"testdata/non_existent.csv"},
+			exp:       "",
+			expErr:    os.ErrNotExist,
 		},
 		{
 			name:      "No Files Error",
