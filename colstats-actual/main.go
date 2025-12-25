@@ -8,8 +8,8 @@ import (
 )
 
 func main() {
-	col := flag.Int("col", 1, "the column number to perform the operation (starts at 1)")
-	op := flag.String("op", "avg", "operation to perform on the column")
+	col := flag.Int("col", 0, "the column number to perform the operation (starts at 1)")
+	op := flag.String("op", "", "operation to perform on the column")
 
 	flag.Parse()
 
@@ -36,10 +36,6 @@ type options struct {
 func run(opts options, out io.Writer) error {
 	if len(opts.filenames) == 0 {
 		return ErrNoFiles
-	}
-
-	if opts.col < 1 {
-		return ErrInvalidColumn
 	}
 
 	var op statFunc

@@ -36,6 +36,11 @@ func avg(data []float64) float64 {
 }
 
 func csvToFloat(r io.Reader, column int) ([]float64, error) {
+	if column < 1 {
+		return nil, ErrInvalidColumn
+
+	}
+
 	column--
 
 	reader := csv.NewReader(r)
@@ -54,7 +59,8 @@ func csvToFloat(r io.Reader, column int) ([]float64, error) {
 			continue
 		}
 
-		if len(row) < column {
+		if len(row) <= column {
+			fmt.Printf("\n\n%d\n\n", column)
 			return []float64{}, fmt.Errorf("column number out of bounds: %w", ErrInvalidColumn)
 		}
 
