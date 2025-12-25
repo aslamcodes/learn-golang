@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"path/filepath"
 	"slices"
 	"strconv"
 	"strings"
@@ -176,5 +177,27 @@ func TestRun(t *testing.T) {
 			}
 
 		})
+	}
+}
+
+func BenchmarkRun(b *testing.B) {
+	filenames, err := filepath.Glob("./testdata/benchmark/*.csv")
+
+	if err != nil {
+		b.Error(err)
+	}
+
+	b.ResetTimer()
+
+	for b.Loop() {
+		opts := options{
+			col:       1,
+			op:        "sum",
+			filenames: filenames,
+		}
+
+		if err := run(opts, io.Discard); err != nil {
+			b.Error(err)
+		}
 	}
 }

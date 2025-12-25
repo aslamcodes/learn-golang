@@ -11,9 +11,9 @@ import (
 )
 
 const (
-	numFiles    = 5
-	rowsPerFile = 10
-	outDir      = "testdata/"
+	numFiles    = 5000
+	rowsPerFile = 2500
+	outDir      = "testdata/benchmark"
 )
 
 var areas = []string{

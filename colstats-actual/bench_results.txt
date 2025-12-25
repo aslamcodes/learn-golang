@@ -1,0 +1,7 @@
+goos: darwin
+goarch: arm64
+pkg: colstats
+cpu: Apple M3 Pro
+BenchmarkRun-11    	      10	1784658604 ns/op
+PASS
+ok  	colstats	18.165s
