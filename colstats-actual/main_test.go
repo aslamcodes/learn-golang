@@ -3,8 +3,10 @@ package main
 import (
 	"bytes"
 	"errors"
+	"fmt"
 	"io"
 	"slices"
+	"strconv"
 	"strings"
 	"testing"
 )
@@ -94,24 +96,72 @@ func TestRun(t *testing.T) {
 		expErr    error
 	}{
 		{
+			name:      "Golden Path Avg",
+			col:       1,
+			op:        "avg",
+			filenames: []string{"testdata/sample_1.csv", "testdata/sample_2.csv"},
+			exp:       "9.642",
+			expErr:    nil,
+		},
+		{
 			name:      "Golden Path",
 			col:       1,
 			op:        "sum",
-			filenames: []string{"testdata/sample_1.csv"},
-			exp:       "",
+			filenames: []string{"testdata/sample_1.csv", "testdata/sample_2.csv"},
+			exp:       "192.83999999999997",
 			expErr:    nil,
+		},
+		{
+			name:      "invalid operation error",
+			col:       1,
+			op:        "boo",
+			filenames: []string{"testdata/sample_2.csv"},
+			exp:       "",
+			expErr:    ErrInvalidOperation,
+		},
+		{
+			name:      "No Files Error",
+			col:       1,
+			op:        "sum",
+			filenames: []string{},
+			exp:       "",
+			expErr:    ErrNoFiles,
 		},
 	}
 
-	out := bytes.NewBuffer([]byte{})
-
 	for _, tC := range testCases {
+		out := bytes.NewBuffer(nil)
+
 		opt := options{
 			col:       tC.col,
 			op:        tC.op,
 			filenames: tC.filenames,
 		}
-		run(opt, out)
+
+		err := run(opt, out)
+
+		if tC.expErr == nil {
+			if err != nil {
+				t.Fatalf("unexpected error: %v", err)
+			}
+			continue
+		}
+
+		if err == nil {
+			t.Fatalf("expected error %v, got nil", tC.expErr)
+		}
+
+		if !errors.Is(err, tC.expErr) {
+			t.Fatalf("expected error %v, got %v", tC.expErr, err)
+		}
+
+		fmt.Println(out.String())
+		act, _ := strconv.ParseFloat(strings.TrimSpace(out.String()), 64)
+		exp, _ := strconv.ParseFloat(tC.exp, 64)
+
+		if exp != act {
+			t.Errorf("expected %f, got %f", exp, act)
+		}
 
 	}
 }

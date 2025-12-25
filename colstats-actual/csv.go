@@ -60,7 +60,6 @@ func csvToFloat(r io.Reader, column int) ([]float64, error) {
 		}
 
 		if len(row) <= column {
-			fmt.Printf("\n\n%d\n\n", column)
 			return []float64{}, fmt.Errorf("column number out of bounds: %w", ErrInvalidColumn)
 		}
 

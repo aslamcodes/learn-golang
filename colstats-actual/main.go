@@ -46,7 +46,7 @@ func run(opts options, out io.Writer) error {
 	case "sum":
 		op = sum
 	default:
-		return fmt.Errorf("invalid operation provided")
+		return fmt.Errorf("invalid operation provided: %w", ErrInvalidOperation)
 	}
 
 	consolidated := []float64{}
