@@ -85,21 +85,23 @@ func TestCSVToFloat(t *testing.T) {
 }
 
 func TestRun(t *testing.T) {
-	// type options struct {
-	// 	col       int
-	// 	op        string
-	// 	filenames []string
-	// }
-
-	// func run(opts options, out io.Writer) error {
-
 	testCases := []struct {
+		name      string
 		col       int
 		op        string
 		filenames []string
-		exp string
-		expErr error
-	}{}
+		exp       string
+		expErr    error
+	}{
+		{
+			name:      "Golden Path",
+			col:       1,
+			op:        "sum",
+			filenames: []string{"testdata/sample_1.csv"},
+			exp:       "",
+			expErr:    nil,
+		},
+	}
 
 	out := bytes.NewBuffer([]byte{})
 

@@ -39,7 +39,7 @@ func main() {
 		_ = w.Write([]string{"temperature", "area"})
 
 		for j := 0; j < rowsPerFile; j++ {
-			temp := -10 + rand.Float64()*6000000 // -10 to 50
+			temp := -10 + rand.Float64()*50 // -10 to 50
 			area := areas[rand.Intn(len(areas))]
 			_ = w.Write([]string{
 				strconv.FormatFloat(temp, 'f', 2, 64),
