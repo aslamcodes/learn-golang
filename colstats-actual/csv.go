@@ -36,40 +36,48 @@ func avg(data []float64) float64 {
 }
 
 func csvToFloat(r io.Reader, column int) ([]float64, error) {
-	if column < 1 {
-		return nil, ErrInvalidColumn
-
-	}
-
 	column--
 
-	reader := csv.NewReader(r)
+	if column < 0 {
+		return nil, ErrInvalidColumn
+	}
 
-	csvData, err := reader.ReadAll()
+	reader := csv.NewReader(r)
+	reader.ReuseRecord = true
+
+	header_row, err := reader.Read()
 
 	if err != nil {
-		return nil, fmt.Errorf("cannot read csv: %w", err)
+		return nil, fmt.Errorf("error reading from file: %w", err)
+	}
+
+	if len(header_row) <= column {
+		return nil, fmt.Errorf("column no greater than list of columns: %w", ErrInvalidColumn)
 	}
 
 	dst := []float64{}
 
-	for i, row := range csvData {
-		// skip the heading row
-		if i == 0 {
-			continue
-		}
+	for i := 0; ; i++ {
 
-		if len(row) <= column {
-			return []float64{}, fmt.Errorf("column number out of bounds: %w", ErrInvalidColumn)
-		}
+		row, err := reader.Read()
 
-		f, err := strconv.ParseFloat(row[column], 64)
+		if err == io.EOF {
+			break
+		}
 
 		if err != nil {
-			return []float64{}, fmt.Errorf("%w: %s", ErrNotANumber, err)
+			return nil, fmt.Errorf("error reading from file: %w", err)
 		}
 
-		dst = append(dst, f)
+		raw := row[column]
+
+		val, err := strconv.ParseFloat(raw, 64)
+
+		if err != nil {
+			return nil, fmt.Errorf("%w: %s", ErrNotANumber, err)
+		}
+
+		dst = append(dst, val)
 	}
 
 	return dst, nil
