@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"runtime"
 	"sync"
 )
 
@@ -55,33 +56,43 @@ func run(opts options, out io.Writer) error {
 	resCh := make(chan []float64)
 	errCh := make(chan error)
 	doneCh := make(chan struct{})
+	filesCh := make(chan string)
+
+	go func() {
+		defer close(filesCh)
+		for _, f := range opts.filenames {
+			filesCh <- f
+		}
+	}()
 
 	wg := sync.WaitGroup{}
 
-	for _, f := range opts.filenames {
+	for range runtime.NumCPU() {
 		wg.Add(1)
-		go func(fname string) {
-			file, err := os.Open(fname)
+		go func() {
 			defer wg.Done()
+			for fname := range filesCh {
+				file, err := os.Open(fname)
 
-			if err != nil {
-				errCh <- fmt.Errorf("cannot read file: %w", err)
-				return
+				if err != nil {
+					errCh <- fmt.Errorf("cannot read file: %w", err)
+					return
+				}
+
+				data, err := csvToFloat(file, opts.col)
+
+				if err != nil {
+					errCh <- fmt.Errorf("error calculating column %d on file %s: %w", opts.col, file.Name(), err)
+					return
+				}
+
+				if err := file.Close(); err != nil {
+					errCh <- err
+				}
+
+				resCh <- data
 			}
-
-			data, err := csvToFloat(file, opts.col)
-
-			if err != nil {
-				errCh <- fmt.Errorf("error calculating column %d on file %s: %w", opts.col, file.Name(), err)
-				return
-			}
-
-			if err := file.Close(); err != nil {
-				errCh <- err
-			}
-
-			resCh <- data
-		}(f)
+		}()
 	}
 
 	go func() {
