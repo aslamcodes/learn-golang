@@ -41,7 +41,7 @@ func run(project string, out io.Writer) error {
 		}
 	}
 
-	_, err := fmt.Fprintln(out, "go build success")
+	_, err := fmt.Fprintln(out, "go build SUCCESS")
 
 	return err
 }
