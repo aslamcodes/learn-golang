@@ -11,6 +11,8 @@ import (
 func main() {
 	project := flag.String("p", "", "project directory")
 
+	flag.Parse()
+
 	if err := run(*project, os.Stdout); err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
@@ -35,8 +37,8 @@ func run(project string, out io.Writer) error {
 
 	if err := cmd.Run(); err != nil {
 		return &stepErr{
-			step: "go build",
-			msg: "go build failed",
+			step:  "go build",
+			msg:   "go build failed",
 			cause: err,
 		}
 	}
