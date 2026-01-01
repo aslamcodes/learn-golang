@@ -19,12 +19,11 @@ func main() {
 }
 
 func run(project string, out io.Writer) error {
-
 	if project == "" {
 		return fmt.Errorf("project directory is required")
 	}
 
-	pipeline := make([]step, 1)
+	pipeline := make([]step, 2)
 
 	// build command won't create binaries when building multiple packages at the same time.
 	// Single package → build + link → write executable; Multiple packages → compile-only → cache results
@@ -39,6 +38,14 @@ func run(project string, out io.Writer) error {
 		[]string{"build", ".", "errors"},
 	)
 
+	pipeline[1] = newStep(
+		"go test",
+		project,
+		"go test OK",
+		"go",
+		[]string{"test", "-v"},
+	)
+
 	for _, s := range pipeline {
 		success_msg, err := s.execute()
 
@@ -46,8 +53,7 @@ func run(project string, out io.Writer) error {
 			return err
 		}
 
-		_, err = fmt.Fprintln(out, success_msg)
-		return err
+		fmt.Fprintln(out, success_msg)
 	}
 
 	return nil

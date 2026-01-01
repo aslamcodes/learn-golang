@@ -16,7 +16,7 @@ func TestRun(t *testing.T) {
 		{
 			name:    "success",
 			project: "./testdata/tool/",
-			exp:     "go build SUCCESS\n",
+			exp:     "go build SUCCESS\ngo test OK\n",
 			expErr:  nil,
 		},
 		{
